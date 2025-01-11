@@ -1,0 +1,36 @@
+service: ecommerce-microservice
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-west-2
+
+functions:
+  createProduct:
+    handler: src/lambda/createProduct.handler
+  getProduct:
+    handler: src/lambda/getProduct.handler
+  updateProduct:
+    handler: src/lambda/updateProduct.handler
+  deleteProduct:
+    handler: src/lambda/deleteProduct.handler
+  createTaxonomy:
+    handler: src/lambda/createTaxonomy.handler
+  getTaxonomy:
+    handler: src/lambda/getTaxonomy.handler
+
+resources:
+  Resources:
+    ProductsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: "Products"
+        AttributeDefinitions:
+          - AttributeName: "ProductId"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "ProductId"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5

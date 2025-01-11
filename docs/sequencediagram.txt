@@ -1,0 +1,27 @@
+actor User
+entity AppSync
+entity Lambda
+entity ValidationService
+entity DynamoDB
+entity Logger
+
+User -> AppSync : Initiates GraphQL Mutation (createProduct)
+AppSync -> Logger : Log request received
+AppSync -> Lambda : Invoke createProduct Lambda
+Lambda -> Logger : Log Lambda function entry
+Lambda -> ValidationService : Validate product input data
+ValidationService --> Lambda : Return validation result (Success/Failure)
+
+alt Validation Failure
+    Lambda -> Logger : Log validation error
+    Lambda -> AppSync : Return validation error
+    AppSync --> User : Return validation error message
+else Validation Success
+    Lambda -> DynamoDB : Put item in Products table
+    DynamoDB --> Lambda : Confirm product creation
+    Lambda -> Logger : Log successful product creation
+    Lambda --> AppSync : Return product data (ProductId, Name, Price, etc.)
+    AppSync --> User : Return product data (Success Response)
+end
+
+AppSync -> Logger : Log response sent to user

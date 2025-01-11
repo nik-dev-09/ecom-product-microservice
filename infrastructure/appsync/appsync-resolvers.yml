@@ -1,0 +1,10 @@
+Resources:
+  ResolverProduct:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref AppSyncAPI
+      FieldName: "getProduct"
+      TypeName: "Query"
+      DataSourceName: !Ref ProductDataSource
+      RequestMappingTemplate: "request.vtl"
+      ResponseMappingTemplate: "response.vtl"

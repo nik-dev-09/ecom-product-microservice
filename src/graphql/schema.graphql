@@ -1,0 +1,48 @@
+type Product {
+  ProductId: ID!
+  Name: String!
+  Description: String
+  Price: Float!
+  Category: String
+  Stock: Int
+  CreatedAt: String
+  UpdatedAt: String
+}
+
+type Taxonomy {
+  TaxonomyId: ID!
+  Name: String!
+  Description: String
+  ParentId: String
+  Type: String
+}
+
+type Query {
+  getProduct(ProductId: ID!): Product
+  getTaxonomy(TaxonomyId: ID!): Taxonomy
+}
+
+type Mutation {
+  createProduct(
+    Name: String!
+    Description: String
+    Price: Float!
+    Category: String
+    Stock: Int!
+  ): Product
+  updateProduct(
+    ProductId: ID!
+    Name: String
+    Description: String
+    Price: Float
+    Category: String
+    Stock: Int
+  ): Product
+  deleteProduct(ProductId: ID!): Product
+  createTaxonomy(
+    Name: String!
+    Description: String
+    ParentId: String
+    Type: String
+  ): Taxonomy
+}

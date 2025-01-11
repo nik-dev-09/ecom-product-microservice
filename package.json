@@ -1,0 +1,19 @@
+{
+  "name": "ecommerce-microservice",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "webpack"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1692.0",
+    "graphql": "^15.5.0",
+    "jest": "^26.6.3",
+    "uuid": "^11.0.5",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "serverless": "^2.46.0"
+  }
+}

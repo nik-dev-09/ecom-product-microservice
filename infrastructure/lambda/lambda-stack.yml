@@ -1,0 +1,9 @@
+Resources:
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: "src/lambda/createProduct.handler"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      FunctionName: "createProductFunction"
+      Runtime: nodejs14.x
+      Timeout: 10

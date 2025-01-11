@@ -1,0 +1,6 @@
+Resources:
+  AppSyncAPI:
+    Type: AWS::AppSync::GraphQLApi
+    Properties:
+      Name: "ProductAPI"
+      AuthenticationType: API_KEY
