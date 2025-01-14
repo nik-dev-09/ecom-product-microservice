@@ -88,6 +88,8 @@ resources:
       Properties:
         Name: EcommerceGraphQLApi-${opt:stage, 'dev'}
         AuthenticationType: API_KEY
+        ApiId: !GetAtt AppSyncApi.ApiId
+        Expires: !Sub ${Math.floor((new Date()).getTime() / 1000) + 86400} 
 
     # AppSync Schema
     AppSyncSchema:
