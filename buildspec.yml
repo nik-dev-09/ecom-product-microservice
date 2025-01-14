@@ -2,20 +2,19 @@ version: 0.2
 
 phases:
   install:
-    runtime-versions:
-      nodejs: 18
     commands:
-      - echo Installing dependencies...
-      - npm install -g serverless
-      - npm install
+      - echo "Increasing file descriptors limit"
+      - ulimit -n 4096  # Increase the open file limit to 4096
+      - echo "Installing dependencies"
+      - npm ci  # Use npm ci for a clean and efficient install (if package-lock.json is present)
   build:
     commands:
-      - echo Packaging the Serverless service...
-      - serverless package
+      - echo "Packaging the Serverless service"
+      - serverless package  # Package the Serverless application
   post_build:
     commands:
-      - echo Deploying the Serverless service...
-      - serverless deploy
+      - echo "Deploying the Serverless service"
+      - serverless deploy  # Deploy the service using Serverless Framework
 
 artifacts:
   files:
