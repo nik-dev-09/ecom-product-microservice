@@ -7,28 +7,28 @@ provider:
 
 functions:
   # Lambda functions for managing products
-  createProduct:
+  create-product:
     handler: src/lambda/createProduct.handler
     events:
       - http:
           path: product
           method: post
 
-  getProduct:
+  get-product:
     handler: src/lambda/getProduct.handler
     events:
       - http:
           path: product/{ProductId}
           method: get
 
-  updateProduct:
+  update-product:
     handler: src/lambda/updateProduct.handler
     events:
       - http:
           path: product/{ProductId}
           method: put
 
-  deleteProduct:
+  delete-product:
     handler: src/lambda/deleteProduct.handler
     events:
       - http:
@@ -36,14 +36,14 @@ functions:
           method: delete
 
   # Lambda functions for managing taxonomy
-  createTaxonomy:
+  create-taxonomy:
     handler: src/lambda/createTaxonomy.handler
     events:
       - http:
           path: taxonomy
           method: post
 
-  getTaxonomy:
+  get-taxonomy:
     handler: src/lambda/getTaxonomy.handler
     events:
       - http:
