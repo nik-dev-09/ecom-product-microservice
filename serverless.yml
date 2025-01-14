@@ -50,34 +50,34 @@ functions:
           path: taxonomy/{ProductId}
           method: get
 
-# resources:
-#   Resources:
-#     # DynamoDB Table for Products
-#     ProductsTable:
-#       Type: AWS::DynamoDB::Table
-#       Properties:
-#         TableName: Products
-#         AttributeDefinitions:
-#           - AttributeName: ProductId
-#             AttributeType: S
-#         KeySchema:
-#           - AttributeName: ProductId
-#             KeyType: HASH
-#         ProvisionedThroughput:
-#           ReadCapacityUnits: 5
-#           WriteCapacityUnits: 5
+resources:
+  Resources:
+    # DynamoDB Table for Products
+    ProductsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Products
+        AttributeDefinitions:
+          - AttributeName: ProductId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: ProductId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
 
-#     # DynamoDB Table for Taxonomy
-#     TaxonomyTable:
-#       Type: AWS::DynamoDB::Table
-#       Properties:
-#         TableName: Taxonomy
-#         AttributeDefinitions:
-#           - AttributeName: TaxonomyId
-#             AttributeType: S
-#         KeySchema:
-#           - AttributeName: TaxonomyId
-#             KeyType: HASH
-#         ProvisionedThroughput:
-#           ReadCapacityUnits: 5
-#           WriteCapacityUnits: 5
+    # DynamoDB Table for Taxonomy
+    TaxonomyTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Taxonomy
+        AttributeDefinitions:
+          - AttributeName: TaxonomyId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: TaxonomyId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
