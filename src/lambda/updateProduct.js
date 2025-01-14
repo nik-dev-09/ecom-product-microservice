@@ -6,7 +6,7 @@ exports.handler = async (event) => {
   const { Name, Description, Price, Category, Stock } = JSON.parse(event.body);
 
   const params = {
-    TableName: "Products",
+    TableName: "Products-dev",
     Key: { ProductId },
     UpdateExpression:
       "set #name = :name, #desc = :desc, #price = :price, #category = :category, #stock = :stock, UpdatedAt = :updatedAt",

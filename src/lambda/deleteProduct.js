@@ -5,7 +5,7 @@ exports.handler = async (event) => {
   const { ProductId } = event.pathParameters;
 
   const params = {
-    TableName: "Products",
+    TableName: "Products-dev",
     Key: { ProductId },
   };
 

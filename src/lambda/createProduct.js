@@ -7,7 +7,7 @@ exports.handler = async (event) => {
   );
 
   const params = {
-    TableName: "Products",
+    TableName: "Products-dev",
     Item: {
       ProductId,
       Name,
