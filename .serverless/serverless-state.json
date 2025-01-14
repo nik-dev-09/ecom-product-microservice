@@ -1,0 +1,1304 @@
+{
+  "service": {
+    "service": "ecommerce-microservice",
+    "serviceObject": {
+      "name": "ecommerce-microservice"
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "nodejs18.x",
+      "region": "us-east-1",
+      "stage": "dev",
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "ServerlessDeploymentBucketPolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+              "Bucket": {
+                "Ref": "ServerlessDeploymentBucket"
+              },
+              "PolicyDocument": {
+                "Statement": [
+                  {
+                    "Action": "s3:*",
+                    "Effect": "Deny",
+                    "Principal": "*",
+                    "Resource": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            },
+                            "/*"
+                          ]
+                        ]
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            }
+                          ]
+                        ]
+                      }
+                    ],
+                    "Condition": {
+                      "Bool": {
+                        "aws:SecureTransport": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "CreateProductLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/ecommerce-microservice-dev-createProduct"
+            }
+          },
+          "GetProductLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/ecommerce-microservice-dev-getProduct"
+            }
+          },
+          "UpdateProductLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/ecommerce-microservice-dev-updateProduct"
+            }
+          },
+          "DeleteProductLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/ecommerce-microservice-dev-deleteProduct"
+            }
+          },
+          "CreateTaxonomyLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/ecommerce-microservice-dev-createTaxonomy"
+            }
+          },
+          "GetTaxonomyLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/ecommerce-microservice-dev-getTaxonomy"
+            }
+          },
+          "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "ecommerce-microservice",
+                        "dev",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/ecommerce-microservice-dev*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/ecommerce-microservice-dev*:*:*"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "ecommerce-microservice",
+                    "dev",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              }
+            }
+          },
+          "CreateProductLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/ecommerce-microservice/dev/1736848014084-2025-01-14T09:46:54.084Z/ecommerce-microservice.zip"
+              },
+              "Handler": "src/lambda/createProduct.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "ecommerce-microservice-dev-createProduct",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "CreateProductLogGroup"
+            ]
+          },
+          "GetProductLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/ecommerce-microservice/dev/1736848014084-2025-01-14T09:46:54.084Z/ecommerce-microservice.zip"
+              },
+              "Handler": "src/lambda/getProduct.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "ecommerce-microservice-dev-getProduct",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "GetProductLogGroup"
+            ]
+          },
+          "UpdateProductLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/ecommerce-microservice/dev/1736848014084-2025-01-14T09:46:54.084Z/ecommerce-microservice.zip"
+              },
+              "Handler": "src/lambda/updateProduct.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "ecommerce-microservice-dev-updateProduct",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "UpdateProductLogGroup"
+            ]
+          },
+          "DeleteProductLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/ecommerce-microservice/dev/1736848014084-2025-01-14T09:46:54.084Z/ecommerce-microservice.zip"
+              },
+              "Handler": "src/lambda/deleteProduct.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "ecommerce-microservice-dev-deleteProduct",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "DeleteProductLogGroup"
+            ]
+          },
+          "CreateTaxonomyLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/ecommerce-microservice/dev/1736848014084-2025-01-14T09:46:54.084Z/ecommerce-microservice.zip"
+              },
+              "Handler": "src/lambda/createTaxonomy.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "ecommerce-microservice-dev-createTaxonomy",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "CreateTaxonomyLogGroup"
+            ]
+          },
+          "GetTaxonomyLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/ecommerce-microservice/dev/1736848014084-2025-01-14T09:46:54.084Z/ecommerce-microservice.zip"
+              },
+              "Handler": "src/lambda/getTaxonomy.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "ecommerce-microservice-dev-getTaxonomy",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "GetTaxonomyLogGroup"
+            ]
+          },
+          "GetProductLambdaVersionQ7SYOBlwad2PrWehOAWoaV5R2LAYvIbNsnC6aXnZs": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "GetProductLambdaFunction"
+              },
+              "CodeSha256": "ABralt1k8NiCnlEPzKi6DPQu5yE7Jbveu+DJysHiIbg="
+            }
+          },
+          "CreateProductLambdaVersionZr0lC3eH83t09nwUKNn0GUxJ7CnZALPK9cjwUmYt0": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "CreateProductLambdaFunction"
+              },
+              "CodeSha256": "ABralt1k8NiCnlEPzKi6DPQu5yE7Jbveu+DJysHiIbg="
+            }
+          },
+          "CreateTaxonomyLambdaVersionOVx17VuvJt4I1bh5t9Ma4n4XWgBCqtKdodNoPs1mUYg": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "CreateTaxonomyLambdaFunction"
+              },
+              "CodeSha256": "ABralt1k8NiCnlEPzKi6DPQu5yE7Jbveu+DJysHiIbg="
+            }
+          },
+          "DeleteProductLambdaVersion9hn6n5ztwrH49TeqlnNWE8qaHVHM4bP2cjOL4aloC0": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "DeleteProductLambdaFunction"
+              },
+              "CodeSha256": "ABralt1k8NiCnlEPzKi6DPQu5yE7Jbveu+DJysHiIbg="
+            }
+          },
+          "UpdateProductLambdaVersionwZYNhHY3xcSgxJTRLWTspBrn6Id0dGR2vkqVmz1rg": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "UpdateProductLambdaFunction"
+              },
+              "CodeSha256": "ABralt1k8NiCnlEPzKi6DPQu5yE7Jbveu+DJysHiIbg="
+            }
+          },
+          "GetTaxonomyLambdaVersionlGlsvHcl4ouvYpTtNnPuiJNLlenVZ1BRCYS8N8cLZ0": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "GetTaxonomyLambdaFunction"
+              },
+              "CodeSha256": "ABralt1k8NiCnlEPzKi6DPQu5yE7Jbveu+DJysHiIbg="
+            }
+          },
+          "ApiGatewayRestApi": {
+            "Type": "AWS::ApiGateway::RestApi",
+            "Properties": {
+              "Name": "dev-ecommerce-microservice",
+              "EndpointConfiguration": {
+                "Types": [
+                  "EDGE"
+                ]
+              },
+              "Policy": ""
+            }
+          },
+          "ApiGatewayResourceProduct": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "product",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceProductIdVar": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceProduct"
+              },
+              "PathPart": "{id}",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceTaxonomy": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "taxonomy",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceTaxonomyIdVar": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceTaxonomy"
+              },
+              "PathPart": "{id}",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodProductPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceProduct"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "CreateProductLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "CreateProductLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodProductIdVarGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceProductIdVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "GetProductLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "GetProductLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodProductIdVarPut": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "PUT",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceProductIdVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "UpdateProductLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "UpdateProductLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodProductIdVarDelete": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "DELETE",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceProductIdVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "DeleteProductLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "DeleteProductLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodTaxonomyPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceTaxonomy"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "CreateTaxonomyLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "CreateTaxonomyLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodTaxonomyIdVarGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceTaxonomyIdVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "GetTaxonomyLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "GetTaxonomyLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayDeployment1736847943992": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "StageName": "dev"
+            },
+            "DependsOn": [
+              "ApiGatewayMethodProductPost",
+              "ApiGatewayMethodProductIdVarGet",
+              "ApiGatewayMethodProductIdVarPut",
+              "ApiGatewayMethodProductIdVarDelete",
+              "ApiGatewayMethodTaxonomyPost",
+              "ApiGatewayMethodTaxonomyIdVarGet"
+            ]
+          },
+          "CreateProductLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "CreateProductLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "GetProductLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "GetProductLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "UpdateProductLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "UpdateProductLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "DeleteProductLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "DeleteProductLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "CreateTaxonomyLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "CreateTaxonomyLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "GetTaxonomyLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "GetTaxonomyLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            },
+            "Export": {
+              "Name": "sls-ecommerce-microservice-dev-ServerlessDeploymentBucketName"
+            }
+          },
+          "GetProductLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "GetProductLambdaVersionQ7SYOBlwad2PrWehOAWoaV5R2LAYvIbNsnC6aXnZs"
+            },
+            "Export": {
+              "Name": "sls-ecommerce-microservice-dev-GetProductLambdaFunctionQualifiedArn"
+            }
+          },
+          "CreateProductLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "CreateProductLambdaVersionZr0lC3eH83t09nwUKNn0GUxJ7CnZALPK9cjwUmYt0"
+            },
+            "Export": {
+              "Name": "sls-ecommerce-microservice-dev-CreateProductLambdaFunctionQualifiedArn"
+            }
+          },
+          "CreateTaxonomyLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "CreateTaxonomyLambdaVersionOVx17VuvJt4I1bh5t9Ma4n4XWgBCqtKdodNoPs1mUYg"
+            },
+            "Export": {
+              "Name": "sls-ecommerce-microservice-dev-CreateTaxonomyLambdaFunctionQualifiedArn"
+            }
+          },
+          "DeleteProductLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "DeleteProductLambdaVersion9hn6n5ztwrH49TeqlnNWE8qaHVHM4bP2cjOL4aloC0"
+            },
+            "Export": {
+              "Name": "sls-ecommerce-microservice-dev-DeleteProductLambdaFunctionQualifiedArn"
+            }
+          },
+          "UpdateProductLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "UpdateProductLambdaVersionwZYNhHY3xcSgxJTRLWTspBrn6Id0dGR2vkqVmz1rg"
+            },
+            "Export": {
+              "Name": "sls-ecommerce-microservice-dev-UpdateProductLambdaFunctionQualifiedArn"
+            }
+          },
+          "GetTaxonomyLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "GetTaxonomyLambdaVersionlGlsvHcl4ouvYpTtNnPuiJNLlenVZ1BRCYS8N8cLZ0"
+            },
+            "Export": {
+              "Name": "sls-ecommerce-microservice-dev-GetTaxonomyLambdaFunctionQualifiedArn"
+            }
+          },
+          "ServiceEndpoint": {
+            "Description": "URL of the service endpoint",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/dev"
+                ]
+              ]
+            },
+            "Export": {
+              "Name": "sls-ecommerce-microservice-dev-ServiceEndpoint"
+            }
+          }
+        }
+      },
+      "coreCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "ServerlessDeploymentBucketPolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+              "Bucket": {
+                "Ref": "ServerlessDeploymentBucket"
+              },
+              "PolicyDocument": {
+                "Statement": [
+                  {
+                    "Action": "s3:*",
+                    "Effect": "Deny",
+                    "Principal": "*",
+                    "Resource": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            },
+                            "/*"
+                          ]
+                        ]
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            }
+                          ]
+                        ]
+                      }
+                    ],
+                    "Condition": {
+                      "Bool": {
+                        "aws:SecureTransport": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "pluginsData": {},
+    "functions": {
+      "createProduct": {
+        "handler": "src/lambda/createProduct.handler",
+        "events": [
+          {
+            "http": {
+              "path": "product",
+              "method": "post",
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "ecommerce-microservice-dev-createProduct",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "CreateProductLambdaVersionZr0lC3eH83t09nwUKNn0GUxJ7CnZALPK9cjwUmYt0"
+      },
+      "getProduct": {
+        "handler": "src/lambda/getProduct.handler",
+        "events": [
+          {
+            "http": {
+              "path": "product/{id}",
+              "method": "get",
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "ecommerce-microservice-dev-getProduct",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "GetProductLambdaVersionQ7SYOBlwad2PrWehOAWoaV5R2LAYvIbNsnC6aXnZs"
+      },
+      "updateProduct": {
+        "handler": "src/lambda/updateProduct.handler",
+        "events": [
+          {
+            "http": {
+              "path": "product/{id}",
+              "method": "put",
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "ecommerce-microservice-dev-updateProduct",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "UpdateProductLambdaVersionwZYNhHY3xcSgxJTRLWTspBrn6Id0dGR2vkqVmz1rg"
+      },
+      "deleteProduct": {
+        "handler": "src/lambda/deleteProduct.handler",
+        "events": [
+          {
+            "http": {
+              "path": "product/{id}",
+              "method": "delete",
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "ecommerce-microservice-dev-deleteProduct",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "DeleteProductLambdaVersion9hn6n5ztwrH49TeqlnNWE8qaHVHM4bP2cjOL4aloC0"
+      },
+      "createTaxonomy": {
+        "handler": "src/lambda/createTaxonomy.handler",
+        "events": [
+          {
+            "http": {
+              "path": "taxonomy",
+              "method": "post",
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "ecommerce-microservice-dev-createTaxonomy",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "CreateTaxonomyLambdaVersionOVx17VuvJt4I1bh5t9Ma4n4XWgBCqtKdodNoPs1mUYg"
+      },
+      "getTaxonomy": {
+        "handler": "src/lambda/getTaxonomy.handler",
+        "events": [
+          {
+            "http": {
+              "path": "taxonomy/{id}",
+              "method": "get",
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "ecommerce-microservice-dev-getTaxonomy",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "GetTaxonomyLambdaVersionlGlsvHcl4ouvYpTtNnPuiJNLlenVZ1BRCYS8N8cLZ0"
+      }
+    },
+    "configValidationMode": "warn",
+    "serviceFilename": "serverless.yml",
+    "initialServerlessConfig": {
+      "service": {
+        "$ref": "$[\"service\"][\"serviceObject\"]"
+      },
+      "provider": {
+        "$ref": "$[\"service\"][\"provider\"]"
+      },
+      "functions": {
+        "$ref": "$[\"service\"][\"functions\"]"
+      }
+    },
+    "layers": {},
+    "isDashboardMonitoringPreconfigured": false,
+    "artifact": "S:\\NodeJs Projects\\ecom-product-microservice\\.serverless\\ecommerce-microservice.zip"
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/ecommerce-microservice/dev/1736848014084-2025-01-14T09:46:54.084Z",
+    "artifact": "ecommerce-microservice.zip"
+  }
+}
