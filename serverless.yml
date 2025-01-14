@@ -18,21 +18,21 @@ functions:
     handler: src/lambda/getProduct.handler
     events:
       - http:
-          path: product/{id}
+          path: product/{ProductId}
           method: get
 
   updateProduct:
     handler: src/lambda/updateProduct.handler
     events:
       - http:
-          path: product/{id}
+          path: product/{ProductId}
           method: put
 
   deleteProduct:
     handler: src/lambda/deleteProduct.handler
     events:
       - http:
-          path: product/{id}
+          path: product/{ProductId}
           method: delete
 
   # Lambda functions for managing taxonomy
@@ -47,7 +47,7 @@ functions:
     handler: src/lambda/getTaxonomy.handler
     events:
       - http:
-          path: taxonomy/{id}
+          path: taxonomy/{ProductId}
           method: get
 
 # resources:
