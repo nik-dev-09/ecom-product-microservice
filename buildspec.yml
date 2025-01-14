@@ -5,18 +5,16 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - ls
-      - echo "Installing dependencies..."
+      - echo Installing dependencies...
       - npm install -g serverless
       - npm install
   build:
     commands:
-      - echo "Packaging the Serverless service..."
+      - echo Packaging the Serverless service...
       - serverless package
   post_build:
     commands:
-      - echo "Deploying the Serverless service..."
-      = serverless package
+      - echo Deploying the Serverless service...
       - serverless deploy
 
 artifacts:
