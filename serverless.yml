@@ -1,34 +1,34 @@
-service: ecom-product-service
+service: ecommerce-microservice
 
 provider:
   name: aws
-  runtime: nodejs18.x
+  runtime: nodejs18.x # Updated to a valid Node.js runtime
   region: us-east-1
 
 functions:
   # Lambda functions for managing products
-  create-product:
+  createProduct:
     handler: src/lambda/createProduct.handler
     events:
       - http:
           path: product
           method: post
 
-  get-product:
+  getProduct:
     handler: src/lambda/getProduct.handler
     events:
       - http:
           path: product/{ProductId}
           method: get
 
-  update-product:
+  updateProduct:
     handler: src/lambda/updateProduct.handler
     events:
       - http:
           path: product/{ProductId}
           method: put
 
-  delete-product:
+  deleteProduct:
     handler: src/lambda/deleteProduct.handler
     events:
       - http:
@@ -36,14 +36,14 @@ functions:
           method: delete
 
   # Lambda functions for managing taxonomy
-  create-taxonomy:
+  createTaxonomy:
     handler: src/lambda/createTaxonomy.handler
     events:
       - http:
           path: taxonomy
           method: post
 
-  get-taxonomy:
+  getTaxonomy:
     handler: src/lambda/getTaxonomy.handler
     events:
       - http:
@@ -52,11 +52,11 @@ functions:
 
 resources:
   Resources:
-    # DynamoDB Table for Products
+    # DynamoDB Table for Products (with stage suffix)
     ProductsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: Products-${opt:stage, 'dev'}
+        TableName: Products-${opt:stage, 'dev'}  # Use the stage name (e.g., dev, prod)
         AttributeDefinitions:
           - AttributeName: ProductId
             AttributeType: S
@@ -67,11 +67,11 @@ resources:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
 
-    # DynamoDB Table for Taxonomy
+    # DynamoDB Table for Taxonomy (use the stage-based naming convention)
     TaxonomyTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: Taxonomy-${opt:stage, 'dev'}
+        TableName: Taxonomy-${opt:stage, 'dev'}  # Use the stage name (e.g., dev, prod)
         AttributeDefinitions:
           - AttributeName: TaxonomyId
             AttributeType: S
@@ -81,24 +81,3 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
-
-    # AppSync API
-    AppSyncApi:
-      Type: AWS::AppSync::GraphQLApi
-      Properties:
-        Name: EcommerceGraphQLApi-${opt:stage, 'dev'}
-        AuthenticationType: API_KEY
-
-    # AppSync Schema
-    AppSyncSchema:
-      Type: AWS::AppSync::GraphQLSchema
-      Properties:
-        ApiId: !GetAtt AppSyncApi.ApiId
-        DefinitionS3Location: src/graphql/schema.graphql
-
-    # AppSync API Key
-    AppSyncApiKey:
-      Type: AWS::AppSync::ApiKey
-      Properties:
-        ApiId: !GetAtt AppSyncApi.ApiId
-        Expires: 1672531199  # Replace with a valid timestamp for API key expiry
