@@ -5,6 +5,7 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
+      - ls
       - echo "Installing dependencies..."
       - npm install -g serverless
       - npm install
