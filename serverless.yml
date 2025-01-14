@@ -52,11 +52,11 @@ functions:
 
 resources:
   Resources:
-    # DynamoDB Table for Products
+    # DynamoDB Table for Products (with stage suffix)
     ProductsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: Products
+        TableName: Products-${opt:stage, 'dev'}  # Use the stage name (e.g., dev, prod)
         AttributeDefinitions:
           - AttributeName: ProductId
             AttributeType: S
@@ -67,11 +67,11 @@ resources:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
 
-    # DynamoDB Table for Taxonomy
+    # DynamoDB Table for Taxonomy (use the stage-based naming convention)
     TaxonomyTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: Taxonomy
+        TableName: Taxonomy-${opt:stage, 'dev'}  # Use the stage name (e.g., dev, prod)
         AttributeDefinitions:
           - AttributeName: TaxonomyId
             AttributeType: S
