@@ -8,7 +8,7 @@ provider:
 package:
   individually: true
   exclude:
-    - '**/*'  # Exclude all files by default
+    - '**/*'
   include:
     - serverless.yml
     - package.json
@@ -20,6 +20,8 @@ functions:
   # Lambda functions for managing products
   create-product:
     handler: src/lambda/createProduct.handler
+    environment:
+      PRODUCTS_TABLE: !Ref ProductsTable
     package:
       include:
         - src/lambda/createProduct.js
@@ -61,6 +63,8 @@ functions:
   # Lambda functions for managing taxonomy
   create-taxonomy:
     handler: src/lambda/createTaxonomy.handler
+    environment:
+      TAXONOMY_TABLE: !Ref TaxonomyTable
     package:
       include:
         - src/lambda/createTaxonomy.js
