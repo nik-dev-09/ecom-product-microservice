@@ -1,7 +1,7 @@
 const AWS = require("aws-sdk");
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-exports.handler = async () => {
+exports.handler = async (body) => {
   const { ProductId, Name, Description, Price, Category, Stock } = body;
 
   const params = {
