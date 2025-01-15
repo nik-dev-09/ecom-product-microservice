@@ -1,8 +1,8 @@
 const AWS = require("aws-sdk");
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-exports.handler = async (event) => {
-  const { ProductId } = event.pathParameters;
+exports.handler = async (body) => {
+  const { ProductId } = body;
 
   const params = {
     TableName: "Products-dev",

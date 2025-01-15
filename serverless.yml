@@ -22,9 +22,9 @@ functions:
     handler: src/lambda/createProduct.handler
     package:
       include:
-        - src/lambda/createProduct.js  # Include only this Lambda
-        - src/models/productModel.js  # Include relevant model
-        - src/services/productService.js  # Include relevant service
+        - src/lambda/createProduct.js
+        - src/models/productModel.js
+        - src/services/productService.js
     layers:
       - arn:aws:lambda:us-east-1:794038246636:layer:EcomMicroserviceLayer:1  # Layer ARN
 
@@ -95,6 +95,9 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
+        # Ensure the ProductId is generated automatically
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
 
     # DynamoDB Table for Taxonomy
     TaxonomyTable:
