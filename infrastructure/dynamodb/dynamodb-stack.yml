@@ -2,7 +2,7 @@ Resources:
   ProductsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: "Products"
+      TableName: "Products-dev"
       AttributeDefinitions:
         - AttributeName: "ProductId"
           AttributeType: "S"

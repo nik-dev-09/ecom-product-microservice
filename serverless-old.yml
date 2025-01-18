@@ -1,0 +1,112 @@
+service: ecommerce-microservice
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+
+package:
+  individually: true
+  exclude:
+    - '**/*'  # Exclude all files by default
+  include:
+    - serverless.yml
+    - package.json
+    - package-lock.json
+    - src/config/**  # Include shared configurations
+    - src/utils/**  # Include utilities
+
+functions:
+  # Lambda functions for managing products
+  create-product:
+    handler: src/lambda/createProduct.handler
+    package:
+      include:
+        - src/lambda/createProduct.js  # Include only this Lambda
+        - src/models/productModel.js  # Include relevant model
+        - src/services/productService.js  # Include relevant service
+    layers:
+      - arn:aws:lambda:us-east-1:794038246636:layer:EcomMicroserviceLayer:1  # Layer ARN
+
+  get-product:
+    handler: src/lambda/getProduct.handler
+    package:
+      include:
+        - src/lambda/getProduct.js
+        - src/models/productModel.js
+        - src/services/productService.js
+    layers:
+      - arn:aws:lambda:us-east-1:794038246636:layer:EcomMicroserviceLayer:1  # Layer ARN
+
+  update-product:
+    handler: src/lambda/updateProduct.handler
+    package:
+      include:
+        - src/lambda/updateProduct.js
+        - src/models/productModel.js
+        - src/services/productService.js
+    layers:
+      - arn:aws:lambda:us-east-1:794038246636:layer:EcomMicroserviceLayer:1  # Layer ARN
+
+  delete-product:
+    handler: src/lambda/deleteProduct.handler
+    package:
+      include:
+        - src/lambda/deleteProduct.js
+        - src/models/productModel.js
+        - src/services/productService.js
+    layers:
+      - arn:aws:lambda:us-east-1:794038246636:layer:EcomMicroserviceLayer:1  # Layer ARN
+
+  # Lambda functions for managing taxonomy
+  create-taxonomy:
+    handler: src/lambda/createTaxonomy.handler
+    package:
+      include:
+        - src/lambda/createTaxonomy.js
+        - src/models/taxonomyModel.js
+        - src/services/taxonomyService.js
+    layers:
+      - arn:aws:lambda:us-east-1:794038246636:layer:EcomMicroserviceLayer:1  # Layer ARN
+
+  get-taxonomy:
+    handler: src/lambda/getTaxonomy.handler
+    package:
+      include:
+        - src/lambda/getTaxonomy.js
+        - src/models/taxonomyModel.js
+        - src/services/taxonomyService.js
+    layers:
+      - arn:aws:lambda:us-east-1:794038246636:layer:EcomMicroserviceLayer:1  # Layer ARN
+
+resources:
+  Resources:
+    # DynamoDB Table for Products
+    ProductsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Products-${opt:stage, 'dev'}
+        AttributeDefinitions:
+          - AttributeName: ProductId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: ProductId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+    # DynamoDB Table for Taxonomy
+    TaxonomyTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Taxonomy-${opt:stage, 'dev'}
+        AttributeDefinitions:
+          - AttributeName: TaxonomyId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: TaxonomyId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
